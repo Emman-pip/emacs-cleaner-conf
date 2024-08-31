@@ -1,12 +1,13 @@
 #+NAME: GNU Emacs Config
-#+Description: a configuration with better practices
+#+DESCRIPTION: a configuration with better practices
 
 * Options
 ** Includes font sizes, line numbering, and the like.
 #+begin_src elisp
- (setq display-line-numbers-type 'relative)
- (global-display-line-numbers-mode)
- (set-face-attribute 'default nil :height 140)
+  (setq display-line-numbers-type 'relative)
+  (global-display-line-numbers-mode)
+  (set-face-attribute 'default nil :height 140)
+  (electric-pair-mode)
 #+end_src
 
 * Package Manager
@@ -132,7 +133,7 @@
 
   (use-package company
   :straight t
-  :config (company-mode)
+  :config (global-company-mode)
   )
 #+end_src
 
@@ -151,6 +152,13 @@
   (evil-set-leader nil (kbd "SPC"))
   (evil-define-key 'normal 'global (kbd "<leader>ff") 'projectile-find-file)
   (evil-define-key 'normal 'global (kbd "<leader>fd") 'projectile-find-dir)
+  (evil-define-key 'normal 'global (kbd "]d") 'next-error)
+  (evil-define-key 'normal 'global (kbd "[d") 'previous-error)
+  (evil-define-key 'normal 'global (kbd "<leader>n") 'evil-next-buffer)
+  (evil-define-key 'normal 'global (kbd "<leader>b") 'evil-prev-buffer)
+  (evil-define-key 'normal 'global (kbd "<leader>m") 'dired)
+  (evil-define-key 'normal 'global (kbd "<leader>d") 'kill-buffer)
+  (evil-define-key 'normal 'global (kbd "<leader>td") 'lsp-ui-doc-toggle)
 #+end_src
 * Terminal
 #+begin_src elisp
@@ -158,26 +166,44 @@
       :straight t)
 #+end_src
 
-* check on the fly through flycheck!
+* flycheck/lsp-ui!!!
 #+begin_src elisp
   (use-package flycheck
-  :straight t
-  :config
+    :straight t
+    :config (global-flycheck-mode)
+    )
+
   (global-flycheck-mode)
-  )
+  (use-package lsp-ui
+    :straight t
+    :custom
+    (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
+    (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
+    :config (add-hook 'prog-mode 'lsp-ui-toggle-symbols-info)
+    )
 #+end_src
 
+* Snippets
+#+begin_src elisp
+    (use-package yasnippet
+    :straight t
+  :config (yas-global-mode 1))
+#+end_src
 * LSPs
 ** Python
 #+begin_src elisp
   (use-package lsp-pyright
     :straight t
+    :custom
+    (setq lsp-pyright-venv-path t)
+    (setq lsp-pyright-auto-search-paths t)
     :hook (python-mode . (lambda ()
-			    (require 'lsp-pyright)
-			    (lsp))))  ; or lsp-deferred
+			   (require 'lsp-pyright)
+			   (lsp))))  ; or lsp-deferred
 #+end_src
 
 ** Java
 #+begin_src elisp
   (use-package lsp-java :straight t :config (add-hook 'java-mode-hook 'lsp))
 #+end_src
+
