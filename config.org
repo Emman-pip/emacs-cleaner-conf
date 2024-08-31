@@ -54,6 +54,7 @@
     (evil-collection-init))
 #+end_src
 
+
 * Theme
 #+begin_src elisp
    (use-package doom-themes
@@ -110,7 +111,27 @@
   )
 #+end_src
 
-#+begin_src 
+* File navigation
+#+begin_src elisp
+  (use-package projectile :straight t
+    :custom
+    (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+    :config
+    (projectile-mode +1)
+    )
+#+end_src
+
+** EVIL BINDINGS
+#+begin_src elisp
+  (evil-set-leader nil (kbd "SPC"))
+  (evil-define-key 'normal 'global (kbd "<leader>ff") 'projectile-find-file)
+  (evil-define-key 'normal 'global (kbd "<leader>fd") 'projectile-find-dir)
+#+end_src
+* Terminal
+#+begin_src elisp
+  (use-package vterm
+      :straight t)
+#+end_src
 
 * LSPs
 ** Python
