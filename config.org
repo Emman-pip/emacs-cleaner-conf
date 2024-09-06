@@ -5,7 +5,7 @@
 ** Includes font sizes, line numbering, and the like.
 #+begin_src elisp
   (setq display-line-numbers-type 'relative)
-  (global-display-line-numbers-mode)
+  (add-hook 'prog-mode 'display-line-numbers-mode)
   (set-face-attribute 'default nil :height 140)
   (electric-pair-mode)
 #+end_src
@@ -32,54 +32,51 @@
 
 * EVIL (MUAHAHAHA)
 #+begin_src elisp
-  (use-package undo-tree :straight t
-    :config (global-undo-tree-mode))
+    (use-package undo-tree :straight t
+      :config (global-undo-tree-mode))
 
-  (use-package evil
-    :straight t
-    :init
-    (setq evil-want-integration 1)
-    (setq evil-want-C-u-scroll 1)
-    (setq evil-want-Y-yank-to-eol t)
-    (setq evil-vsplit-window-right t)
-    (setq evil-split-window-below t)
-    (setq evil-undo-system 'undo-tree)
-    (setq evil-want-keybinding nil)
-    :config
-    (evil-mode 1))
+    (use-package evil
+      :straight t
+      :init
+      (setq evil-want-integration 1)
+      (setq evil-want-C-u-scroll 1)
+      (setq evil-want-Y-yank-to-eol t)
+      (setq evil-vsplit-window-right t)
+      (setq evil-split-window-below t)
+      (setq evil-undo-system 'undo-tree)
+      (setq evil-want-keybinding nil)
+      :hook
+      ('prog-mode . 'evil-mode)
+      ('prog-mode . 'display-line-numbers-mode)
+  )
 
-  (use-package evil-collection
-    :after evil
-    :straight t
-    :config
-    (evil-collection-init))
+    (use-package evil-collection
+      :after evil
+      :straight t
+      :config
+      (evil-collection-init))
 #+end_src
 
 
 * Theme
 #+begin_src elisp
-    (use-package doom-themes
-      :straight t
-      :config
-      ;; Global settings (defaults)
-      (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-	    doom-themes-enable-italic t) ; if nil, italics is universally disabled
-      (load-theme 'doom-gruvbox t)
-
-      ;; Enable flashing mode-line on errors
-      (doom-themes-visual-bell-config)
-      ;; Corrects (and improves) org-mode's native fontification.
-      (doom-themes-org-config))
-    (use-package nerd-icons
-      :straight t
-      :custom
-      ;; The Nerd Font you want to use in GUI
-      ;; "Symbols Nerd Font Mono" is the default and is recommended
-      ;; but you can use any other Nerd Font if you want
-      (nerd-icons-font-family "Hack Nerd Font")
-      )
-    ;; font here
-    (set-frame-font "Hack Nerd Font 14" nil t)
+  (use-package catppuccin-theme
+  :straight t
+  :init
+  (load-theme 'catppuccin :no-confirm)
+    (setq catppuccin-flavor 'frappe) ;; or 'latte, 'macchiato, or 'mocha
+    (catppuccin-reload)
+  )
+  (use-package nerd-icons
+    :straight t
+    :custom
+    ;; The Nerd Font you want to use in GUI
+    ;; "Symbols Nerd Font Mono" is the default and is recommended
+    ;; but you can use any other Nerd Font if you want
+    (nerd-icons-font-family "Hack Nerd Font")
+    )
+  ;; font here
+  ;; (set-frame-font "Hack Nerd Font 14" nil t)
 
 #+end_src
 
@@ -99,42 +96,102 @@
 
 * Completion
 #+begin_src elisp
-  (use-package counsel :straight t)
-  (use-package ivy
-    :straight t
-    :custom
-    (setq ivy-use-virtual-buffers t)
-    (setq enable-recursive-minibuffers t)
-    ;; enable this if you want `swiper' to use it
-    ;; (setq search-default-mode #'char-fold-to-regexp)
-    (global-set-key "\C-s" 'swiper)
-    (global-set-key (kbd "C-c C-r") 'ivy-resume)
-    (global-set-key (kbd "<f6>") 'ivy-resume)
-    (global-set-key (kbd "M-x") 'counsel-M-x)
-    (global-set-key (kbd "C-x C-f") 'counsel-find-file)
-    (global-set-key (kbd "<f1> f") 'counsel-describe-function)
-    (global-set-key (kbd "<f1> v") 'counsel-describe-variable)
-    (global-set-key (kbd "<f1> o") 'counsel-describe-symbol)
-    (global-set-key (kbd "<f1> l") 'counsel-find-library)
-    (global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
-    (global-set-key (kbd "<f2> u") 'counsel-unicode-char)
-    (global-set-key (kbd "C-c g") 'counsel-git)
-    (global-set-key (kbd "C-c j") 'counsel-git-grep)
-    (global-set-key (kbd "C-c k") 'counsel-ag)
-    (global-set-key (kbd "C-x l") 'counsel-locate)
-    (global-set-key (kbd "C-S-o") 'counsel-rhythmbox)
-    (define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
-    :config (ivy-mode)
-    )
-  (use-package helm
-    :straight t
-    :config
-    (helm-mode 1))
+      (use-package counsel :straight t)
+      (use-package ivy
+	:straight t
+	:custom
+	(setq ivy-use-virtual-buffers t)
+	(setq enable-recursive-minibuffers t)
+	;; enable this if you want `swiper' to use it
+	;; (setq search-default-mode #'char-fold-to-regexp)
+	(global-set-key "\C-s" 'swiper)
+	(global-set-key (kbd "C-c C-r") 'ivy-resume)
+	(global-set-key (kbd "<f6>") 'ivy-resume)
+	(global-set-key (kbd "M-x") 'counsel-M-x)
+	(global-set-key (kbd "C-x C-f") 'counsel-find-file)
+	(global-set-key (kbd "<f1> f") 'counsel-describe-function)
+	(global-set-key (kbd "<f1> v") 'counsel-describe-variable)
+	(global-set-key (kbd "<f1> o") 'counsel-describe-symbol)
+	(global-set-key (kbd "<f1> l") 'counsel-find-library)
+	(global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
+	(global-set-key (kbd "<f2> u") 'counsel-unicode-char)
+	(global-set-key (kbd "C-c g") 'counsel-git)
+	(global-set-key (kbd "C-c j") 'counsel-git-grep)
+	(global-set-key (kbd "C-c k") 'counsel-ag)
+	(global-set-key (kbd "C-x l") 'counsel-locate)
+	(global-set-key (kbd "C-S-o") 'counsel-rhythmbox)
+	(define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
+	:config (ivy-mode)
+	)
+      (use-package helm
+	:straight t
+	:config
+	(helm-mode 1))
 
-  (use-package company
-  :straight t
-  :config (global-company-mode)
-  )
+      ;; (use-package company
+      ;;   :straight t
+      ;;   :custom
+      ;;   (setq company-idle-delay nil)
+      ;;   (global-set-key (kbd "C-c y") 'company-yasnippet)
+      ;;   :hook ('prog-mode . 'company-mode)
+      ;;   )
+    (use-package corfu
+      :straight t
+      ;; Optional customizations
+      :custom
+      (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
+      (corfu-auto t)                 ;; Enable auto completion
+      ;; (corfu-separator ?\s)          ;; Orderless field separator
+      ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
+      ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
+      ;; (corfu-preview-current nil)    ;; Disable current candidate preview
+      ;; (corfu-preselect 'prompt)      ;; Preselect the prompt
+      ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
+      ;; (corfu-scroll-margin 5)        ;; Use scroll margin
+
+      ;; Enable Corfu only for certain modes. See also `global-corfu-modes'.
+      :hook ((prog-mode . corfu-mode))
+      ;;        (shell-mode . corfu-mode)
+      ;;        (eshell-mode . corfu-mode))
+
+      ;; Recommended: Enable Corfu globally.  This is recommended since Dabbrev can
+      ;; be used globally (M-/).  See also the customization variable
+      ;; `global-corfu-modes' to exclude certain modes.
+      ;; :init
+      ;; (global-corfu-mode))
+      )
+
+    ;; A few more useful configurations...
+    (use-package emacs
+      :straight t
+      :custom
+      ;; TAB cycle if there are only few candidates
+      ;; (completion-cycle-threshold 3)
+
+      ;; Enable indentation+completion using the TAB key.
+      ;; `completion-at-point' is often bound to M-TAB.
+      (tab-always-indent 'complete)
+
+      ;; Emacs 30 and newer: Disable Ispell completion function. As an alternative,
+      ;; try `cape-dict'.
+      (text-mode-ispell-word-completion nil)
+
+      ;; Emacs 28 and newer: Hide commands in M-x which do not apply to the current
+      ;; mode.  Corfu commands are hidden, since they are not used via M-x. This
+      ;; setting is useful beyond Corfu.
+      (read-extended-command-predicate #'command-completion-default-include-p))
+  ;; Use Dabbrev with Corfu!
+  (use-package dabbrev
+    :straight t
+    ;; Swap M-/ and C-M-/
+    :bind (("M-/" . dabbrev-completion)
+	   ("C-M-/" . dabbrev-expand))
+    :config
+    (add-to-list 'dabbrev-ignored-buffer-regexps "\\` ")
+    ;; Since 29.1, use `dabbrev-ignored-buffer-regexps' on older.
+    (add-to-list 'dabbrev-ignored-buffer-modes 'doc-view-mode)
+    (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode)
+    (add-to-list 'dabbrev-ignored-buffer-modes 'tags-table-mode))
 #+end_src
 
 * File navigation
@@ -183,11 +240,16 @@
     )
 #+end_src
 
+* PDF READER
+#+begin_src elisp
+  (use-package pdf-tools :straight t)
+#+end_src
+
 * Snippets
 #+begin_src elisp
-    (use-package yasnippet
-    :straight t
-  :config (yas-global-mode 1))
+      (use-package yasnippet
+      :straight t
+    :hook ('prog-mode . 'yas-minor-mode))
 #+end_src
 * LSPs
 ** Python
