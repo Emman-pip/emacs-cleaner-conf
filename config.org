@@ -196,19 +196,20 @@
 
 * File navigation
 #+begin_src elisp
-  (use-package projectile :straight t
-    :custom
-    (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
-    :config
-    (projectile-mode +1)
-    )
+  ;; (use-package projectile :straight t
+  ;;   :custom
+  ;;   (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+  ;;   :config
+  ;;   (projectile-mode +1)
+  ;;   )
 #+end_src
 
 ** EVIL BINDINGS
 #+begin_src elisp
   (evil-set-leader nil (kbd "SPC"))
-  (evil-define-key 'normal 'global (kbd "<leader>ff") 'projectile-find-file)
-  (evil-define-key 'normal 'global (kbd "<leader>fd") 'projectile-find-dir)
+  ;; TODO replace these
+  ;; (evil-define-key 'normal 'global (kbd "<leader>ff") 'projectile-find-file)
+  ;; (evil-define-key 'normal 'global (kbd "<leader>fd") 'projectile-find-dir)
   (evil-define-key 'normal 'global (kbd "]d") 'next-error)
   (evil-define-key 'normal 'global (kbd "[d") 'previous-error)
   (evil-define-key 'normal 'global (kbd "<leader>n") 'evil-next-buffer)
